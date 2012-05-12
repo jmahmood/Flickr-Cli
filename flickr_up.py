@@ -1,5 +1,5 @@
-# encoding: utf8
 #!/usr/bin/env python
+# encoding: utf8
 import sys
 import os
 from optparse import OptionParser
