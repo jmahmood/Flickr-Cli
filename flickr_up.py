@@ -5,9 +5,13 @@ import os
 from optparse import OptionParser
 import flickrapi
 import flickr_cli
+from ConfigParser import ConfigParser
 
-api_key = "f54bef90e9697fd9559715e8a365472c"
-secret = "0dd16c378482e1e8"
+config = ConfigParser()
+config.read('flickr.config')
+api_key = config.get('flickr', 'key')
+secret = config.get('flickr', 'secret')
+
 
 def photoset_default_title(directory):
 	return os.path.basename(os.path.normpath(directory))
