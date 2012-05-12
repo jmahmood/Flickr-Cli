@@ -47,7 +47,6 @@ class photoset(object):
         self.photoset_id = self.exists(title) or self.create(title)
 
     def add_photos(self):
-        print repr(self.photo_ids)
         return [ self.flickr.photosets_addPhoto(
                 photoset_id=self.photoset_id, 
                 photo_id=i) for i in self.photo_ids ]
@@ -147,16 +146,3 @@ class familyDirectoryUpload(directoryFlickrUpload):
     def flickr_upload(self, f):
         return self.flickr.upload(filename=f, tags=self.tags, is_public=0, is_family=1)
 
-
-
-"""
-flickr = flickrapi.FlickrAPI(api_key, secret)
-(token, frob) = flickr.get_token_part_one(perms='write')
-flickr.get_token_part_two((token, frob))
-images = get_images("/Users/jawaadmahmood/wedding/Mariko/Mendhi")
-flickr_cli(flickr, images, "mehndi", "Mehndi")
-
-
-images = get_images("/Users/jawaadmahmood/wedding/Mariko/Ceremony")
-flickr_cli(flickr, images, "ceremony", "Wedding Ceremony")
-"""
