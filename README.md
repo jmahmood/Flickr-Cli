@@ -17,17 +17,16 @@ Flickrapi, Python 2.6.x
 
 Installation
 ------------
-Clone this repository and then run the following two commands.
+Clone this repository and then run the following commands:
 
-  pip install flickrapi
-  chmod +x ./flickr_up.py
+    pip install -r pip.txt
 
 The first time you run it, it will prompt you to log into your Flickr account through a browser window.  Once you are logged in, you need to approve uploads by the app to your Flickr account.
 
 Example:
 --------
 
-   ./flickr_up.py -d /home/jawaad/images/lolcats/ -t lol -t cats -p Cats
+    ./flickr_up.py -d /path/to/images/lolcats/ -t lol -t cats -p Cats
 
 
 Please Help
