@@ -32,7 +32,7 @@ http://www.flickr.com/services/apps/create/noncommercial/?
 Example:
 --------
 
-    python ./flickr_up.py -d /path/to/lolcats/ -t lol -t cats -p Cats
+    ./flickr_up.py -d /path/to/lolcats/ -t lol -t cats -p Cats
 
 The first time you run it, it will prompt you to log into your Flickr account through a browser window.  Once you are logged in, you need to approve uploads by the app to your Flickr account.
 
