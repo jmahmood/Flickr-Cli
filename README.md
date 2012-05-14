@@ -19,14 +19,14 @@ Installation
 ------------
 1. Install python dependencies
 
-    pip install -r pip.txt
+        pip install -r pip.txt
 
 2. Get your API key and secret from Flickr:
 http://www.flickr.com/services/apps/create/noncommercial/?
 
 3. Create `flickr.config` from the sample, edit to use your own key
 
-    cp flickr.config.sample flickr.config
+        cp flickr.config.sample flickr.config
 
 
 Example:
