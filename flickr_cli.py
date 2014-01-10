@@ -108,7 +108,9 @@ class directoryFlickrUpload(abstractDirectoryUpload):
 
     def valid_img(self, f):
         try:
-            if imghdr.what(f):
+            file_type = imghdr.what(f)
+            supported_types = ['jpeg', 'gif', 'png']
+            if file_type in supported_types:
                 return True
         except:
             pass
