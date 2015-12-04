@@ -1,5 +1,6 @@
 # encoding: utf8
 # !/usr/bin/env python
+import logging
 
 import os.path
 import imghdr
@@ -11,8 +12,12 @@ def valid_img(f):
         supported_types = ['jpeg', 'gif', 'png']
         if file_type in supported_types:
             return True
-    except:
-        pass
+    except AttributeError as e:
+        # You probably passed something that is not a path.
+        logging.exception(e)
+    except IOError as e:
+        # You passed a path that does not exist, or you do not have access to it.
+        logging.exception(e)
     return False
 
 
