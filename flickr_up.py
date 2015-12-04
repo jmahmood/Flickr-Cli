@@ -46,7 +46,7 @@ parser.add_option("-R", "--RECURSIVE",
 (options, args) = parser.parse_args()
 
 
-if len(args) > 0:
+if args:
     print "ERROR"
     print "Aborting due to unrecognized arguments:\n %s" % ("\n\t".join(args))
     sys.exit(0)
