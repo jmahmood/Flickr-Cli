@@ -1,29 +1,28 @@
 # encoding: utf8
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import os
 import imghdr
 
 
 # Maintains state for the uploads
+def get_upload_size(files):
+    return sum([os.path.getsize(f) for f in files])
+
+
 class uploadStatus:
-
-    def __init__(self, filelist):
-        self.filelist = filelist
-        self.total_upload_size = self.get_upload_size(self.filelist)
-
-    def get_upload_size(self, files):
-        return sum([os.path.getsize(f) for f in files])
+    def __init__(self, file_list):
+        self.filelist = file_list
+        self.total_upload_size = get_upload_size(self.filelist)
 
     def uploaded_thus_far(self):
-        return float(self.get_upload_size(
+        return float(get_upload_size(
             self.filelist[0:self.filelist.index(self.file)]))
 
     def status(self, progress, done):
         # which file?
         # What % of it is done?
-        total = self.uploaded_thus_far() + \
-                float(progress * os.path.getsize(self.file)) / 100
+        total = self.uploaded_thus_far() + float(progress * os.path.getsize(self.file)) / 100
         return round(total / self.total_upload_size * 100, 2)
 
 
@@ -36,7 +35,7 @@ class photoset(object):
 
     def exists(self, title):
         photosets = self.flickr.photosets_getList(
-            ).find("photosets").findall("photoset")
+        ).find("photosets").findall("photoset")
 
         for p in photosets:
             if p.find("title").text == title:
@@ -45,18 +44,18 @@ class photoset(object):
 
     def create(self, title):
         return self.flickr.photosets_create(
-                method='flickr.photosets.create',
-                title=title,
-                primary_photo_id=self.primary_photo_id
-            ).find("photoset").attrib['id']
+            method='flickr.photosets.create',
+            title=title,
+            primary_photo_id=self.primary_photo_id
+        ).find("photoset").attrib['id']
 
     def get_photoset_id(self, title):
         self.photoset_id = self.exists(title) or self.create(title)
 
     def add_photos(self):
         return [self.flickr.photosets_addPhoto(
-                photoset_id=self.photoset_id,
-                photo_id=i) for i in self.photo_ids]
+            photoset_id=self.photoset_id,
+            photo_id=i) for i in self.photo_ids]
 
     def __call__(self, title, ids, primary_photo_id=0):
         self.primary_photo_id = primary_photo_id or ids[0]
@@ -75,8 +74,8 @@ class abstractDirectoryUpload(object):
     def get_directory_contents(self, d="/Users/jawaadmahmood"):
         dirList = os.listdir(d)
         self.files = [os.path.join(d, f)
-            for f in dirList
-            if not self.filter_directory_contents(d, f)]
+                      for f in dirList
+                      if not self.filter_directory_contents(d, f)]
 
     def prehook(self, **kwargs):
         pass
@@ -101,7 +100,6 @@ class abstractDirectoryUpload(object):
 
 
 class directoryFlickrUpload(abstractDirectoryUpload):
-
     def __init__(self, flickr):
         self.flickr = flickr
         self.create_photoset = photoset(flickr)
@@ -134,11 +132,11 @@ class directoryFlickrUpload(abstractDirectoryUpload):
 
     def parse_response(self):
         self.ids = [r.find("photoid").text for (r, f)
-            in self.responses
-            if r.attrib['stat'] == "ok"]
+                    in self.responses
+                    if r.attrib['stat'] == "ok"]
         self.failed_uploads = [f for (r, f)
-            in self.responses
-            if r.attrib['stat'] != "ok"]
+                               in self.responses
+                               if r.attrib['stat'] != "ok"]
 
     def posthook(self):
         self.create_photoset(self.photoset_name, self.ids)

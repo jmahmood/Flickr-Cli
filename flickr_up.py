@@ -13,38 +13,37 @@ api_key = config.get('flickr', 'key')
 secret = config.get('flickr', 'secret')
 
 
-def photoset_default_title(directory):
-    return os.path.basename(os.path.normpath(directory))
+def photoset_default_title(d):
+    return os.path.basename(os.path.normpath(d))
+
 
 parser = OptionParser(version="1.0")
 
 parser.add_option("-d", "--directory", dest="directory",
-            help="The directory from which you wish to copy the files",
-            metavar="DIRECTORY")
+                  help="The directory from which you wish to copy the files",
+                  metavar="DIRECTORY")
 
 parser.add_option("-p", "--photoset",
-          dest="photoset", default=False,
-          help="the name for the photoset on flickr.")
+                  dest="photoset", default=False,
+                  help="the name for the photoset on flickr.")
 
 parser.add_option("-t", "--tags",
-          action="append", dest="tags",
-          help="Tag to apply to pictures in this directory.")
+                  action="append", dest="tags",
+                  help="Tag to apply to pictures in this directory.")
 
 parser.add_option("-q", "--quiet",
-          action="store_false", dest="verbose", default=True,
-          help="don't print status messages to stdout")
+                  action="store_false", dest="verbose", default=True,
+                  help="don't print status messages to stdout")
 
 parser.add_option("-r", "--recursive",
-          action="store_false", dest="recursive", default=False,
-          help="recursively copy all subdirectories to different photosets")
+                  action="store_false", dest="recursive", default=False,
+                  help="recursively copy all subdirectories to different photosets")
 
 parser.add_option("-R", "--RECURSIVE",
-      action="store_false", dest="same_recursive", default=False,
-      help="recursively copy all subdirectories to the same photoset. \
-      Overrides -r.")
+                  action="store_false", dest="same_recursive", default=False,
+                  help="recursively copy all subdirectories to the same photoset.  Overrides -r.")
 
 (options, args) = parser.parse_args()
-
 
 if len(args) > 0:
     print "ERROR"
@@ -55,7 +54,6 @@ if not options.directory:
     print "ERROR"
     print "You must pass a directory.\n (example goes here)"
     sys.exit(0)
-
 
 directory = options.directory
 tags = options.tags or ""
@@ -72,7 +70,6 @@ if not options.tags:
     print "You did not pass any tags.\n"
 
 print directory, tags, photoset
-
 
 flickr = flickrapi.FlickrAPI(api_key, secret)
 (token, frob) = flickr.get_token_part_one(perms='write')
