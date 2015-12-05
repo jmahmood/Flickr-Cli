@@ -112,7 +112,7 @@ class AbstractDirectoryUpload(object):
     def prehook(self, **kwargs):
         pass
 
-    def posthook(self):
+    def posthook(self, **kwargs):
         pass
 
     def upload(self):
@@ -128,7 +128,7 @@ class AbstractDirectoryUpload(object):
         self.get_directory_contents(self.directory)
         self.upload()
         self.parse_response()
-        self.posthook()
+        self.posthook(**kwargs)
 
 
 class DirectoryFlickrUpload(AbstractDirectoryUpload):
@@ -149,7 +149,7 @@ class DirectoryFlickrUpload(AbstractDirectoryUpload):
     def filter_directory_contents(self, d, f):
         return not valid_img(os.path.join(d, f))
 
-    def prehook(self, tags, pset):
+    def prehook(self, tags, pset, **kwargs):
         self.ids = []
         self.tags = ", ".join(tags)
         self.photoset_name = pset
@@ -167,7 +167,7 @@ class DirectoryFlickrUpload(AbstractDirectoryUpload):
         self.ids = [r.find("photoid").text for (r, f) in self.responses if r.attrib['stat'] == "ok"]
         self.failed_uploads = [f for (r, f) in self.responses if r.attrib['stat'] != "ok"]
 
-    def posthook(self):
+    def posthook(self, **kwargs):
         self.create_photoset(self.photoset_name, self.ids)
         self.handle_failed_uploads()
 

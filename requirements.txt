@@ -1,3 +1,4 @@
 # Install required python packages using pip:
 # pip install -r pip.txt
-flickrapi==1.4.5
+
+flickrapi >= 2.0

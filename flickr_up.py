@@ -73,9 +73,8 @@ if not options.tags:
 
 print directory, tags, photoset
 
-
 flickr = flickrapi.FlickrAPI(api_key, secret)
 (token, frob) = flickr.get_token_part_one(perms='write')
 flickr.get_token_part_two((token, frob))
 upload = flickr_cli.DirectoryFlickrUpload(flickr)
-upload(directory=directory, photoset=photoset, tags=tags)
+upload(directory=directory, pset=photoset, tags=tags)
