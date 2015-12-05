@@ -166,6 +166,8 @@ class DirectoryFlickrUpload(AbstractDirectoryUpload):
     def parse_response(self):
         self.ids = [r.find("photoid").text for (r, f) in self.responses if r.attrib['stat'] == "ok"]
         self.failed_uploads = [f for (r, f) in self.responses if r.attrib['stat'] != "ok"]
+        self.successful_uploads_count = len(self.ids)
+        self.failed_uploads_count = len(self.failed_uploads)
 
     def posthook(self, **kwargs):
         self.create_photoset(self.photoset_name, self.ids)
@@ -183,7 +185,7 @@ class PublicDirectoryUpload(DirectoryFlickrUpload):
         :type f: str
         The path to a file.
         """
-        return super(PublicDirectoryUpload, self).flickr_upload(f, self.tags, is_public=1, is_family=0)
+        return super(PublicDirectoryUpload, self).flickr_upload(f, is_public=1, is_family=0)
 
 
 class FamilyDirectoryUpload(DirectoryFlickrUpload):
@@ -193,4 +195,4 @@ class FamilyDirectoryUpload(DirectoryFlickrUpload):
         """dispatches upload command to flickr with appropriate details taken from the self object
         :type f: str
         The path to a file."""
-        return super(FamilyDirectoryUpload, self).flickr_upload(f, self.tags, is_public=0, is_family=1)
+        return super(FamilyDirectoryUpload, self).flickr_upload(f, is_public=0, is_family=1)

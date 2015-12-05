@@ -2,3 +2,4 @@
 # pip install -r pip.txt
 
 flickrapi >= 2.0
+requests[security]
