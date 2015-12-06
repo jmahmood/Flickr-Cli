@@ -19,7 +19,7 @@ Installation
 ------------
 1. Install python dependencies
 
-        pip install -r pip.txt
+        pip install -r requirements.txt
 
 2. Copy the sample `flickr.config`:
 
@@ -35,7 +35,10 @@ Example:
 
     ./flickr_up.py -d /path/to/lolcats/ -t lol -t cats -p Cats
 
-The first time you run it, it will prompt you to log into your Flickr account through a browser window.  Once you are logged in, you need to approve uploads by the app to your Flickr account.
+The first time you run it, it will prompt you to log into your Flickr account through a browser window.  
+Once you are logged in, you need to approve uploads by the app to your Flickr account.  Finally, you will be asked
+to input a code that they provide you with; you can copy/paste this into your command-line.  You should be good to go
+after that.
 
 
 TODO
