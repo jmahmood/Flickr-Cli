@@ -6,6 +6,12 @@ import imghdr
 
 
 def valid_img(f):
+    """
+    Is this a valid image that we can use to upload?
+
+    :param f: str that indicates the file directory.
+    :return: boolean
+    """
     try:
         file_type = imghdr.what(f)
         supported_types = ['jpeg', 'gif', 'png']
@@ -21,6 +27,11 @@ def valid_img(f):
 
 
 def get_upload_size(files):
+    """
+    Size of all files in a list.
+    :param files:
+    :return:
+    """
     return sum([os.path.getsize(f) for f in files])
 
 
@@ -41,6 +52,10 @@ class UploadStatus(object):
         self.file = self.get_current_file()
 
     def increment(self):
+        """
+        Select the next file in the list
+        :return:
+        """
         try:
             self._file_no += 1
             self.file = self.get_current_file()
@@ -49,11 +64,18 @@ class UploadStatus(object):
             return None
 
     def get_current_file(self):
+        """
+        What is the file that is currently selected?  Used to fill the self.file variable.
+        :return:
+        """
         return self.file_list[self._file_no]
 
     def uploaded_thus_far(self):
-        return float(get_upload_size(
-            self.file_list[0:self._file_no]))
+        """
+        Total file size for files uploaded thus far.
+        :return:
+        """
+        return float(get_upload_size(self.file_list[0:self._file_no]))
 
     def status(self, progress):
         """
@@ -93,6 +115,11 @@ class Photoset(object):
         ).find("photoset").attrib['id']
 
     def get_photoset_id(self, title):
+        """
+        Get photoset ID from flickr for a photoset with the title 'title'
+        :param title:
+        :return:
+        """
         self.photoset_id = self.exists(title) or self.create(title)
 
     def add_photos(self):
@@ -121,9 +148,12 @@ class AbstractDirectoryUpload(object):
         self.files = []
 
     def filter_directory_contents(self, d, f):
+        """Return true for files we don't want in our list (directories for now)"""
         return os.path.isdir(os.path.join(d, f))
 
     def get_directory_contents(self, d):
+        """Get list of all files in a directory.
+        TODO: Maybe this is better as a generator?"""
         self.files = [os.path.join(d, f)
                       for f in os.listdir(d)
                       if not self.filter_directory_contents(d, f)]
@@ -173,6 +203,12 @@ class DirectoryFlickrUpload(AbstractDirectoryUpload):
         self.photoset_name = pset
 
     def flickr_upload(self, f, **kwargs):
+        """
+        Actually uploads file to Flickr.
+        :param f:
+        :param kwargs:
+        :return:
+        """
         print "Uploading %s" % f
         return self.flickr.upload(filename=f, tags=self.tags,
                                   is_public=kwargs.get('is_public', 0),
@@ -182,6 +218,10 @@ class DirectoryFlickrUpload(AbstractDirectoryUpload):
         self.responses = [(self.flickr_upload(f, is_public=0, is_family=0), f) for f in self.files]
 
     def parse_response(self):
+        """
+        Handles response from Flickr API.
+        :return:
+        """
         self.ids = [r.find("photoid").text for (r, f) in self.responses if r.attrib['stat'] == "ok"]
         self.failed_uploads = [f for (r, f) in self.responses if r.attrib['stat'] != "ok"]
         self.successful_uploads_count = len(self.ids)

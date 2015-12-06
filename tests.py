@@ -12,12 +12,20 @@ requests.packages.urllib3.disable_warnings()
 
 
 class TestSuccessfulUploads(unittest.TestCase):
+    """
+    Currently the repository for all tests related to flickr_up.
+    """
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
     def path(self, relative_path):
+        """Get paths relative to the test script file"""
         return os.path.join(self.BASE_DIR, relative_path)
 
     def setUp(self):
+        """
+        Setup API key / Flickr Token for additional logins.
+        :return:
+        """
         config = ConfigParser()
         config.read('flickr.config')
         api_key = config.get('flickr', 'key')
@@ -38,29 +46,49 @@ class TestSuccessfulUploads(unittest.TestCase):
             self.flickr.get_access_token(verifier)
 
     def test_upload(self):
+        """
+        Test normal upload using DirectoryFlickrUpload
+        TODO: Check file private/non-family status
+        :return:
+        """
         upload = flickr_cli.DirectoryFlickrUpload(self.flickr)
         upload(directory='./test_img/', pset=['test-0001'], tags=['tests'])
         self.assertEqual(upload.successful_uploads_count, 1)
 
     def test_upload_public(self):
+        """
+        Test public file upload using PublicDirectoryUpload
+        TODO: Check file public status
+        :return:
+        """
         public_upload = flickr_cli.PublicDirectoryUpload(self.flickr)
         public_upload(directory='./test_img/', pset=['test-0001'], tags=['tests'])
         self.assertEqual(public_upload.successful_uploads_count, 1)
 
     def test_upload_family(self):
+        """
+        Test public file upload using PublicDirectoryUpload
+        TODO: Check file family status
+        :return:
+        """
         family_upload = flickr_cli.FamilyDirectoryUpload(self.flickr)
         family_upload(directory='./test_img/', pset=['test-0001'], tags=['tests'])
         self.assertEqual(family_upload.successful_uploads_count, 1)
 
     def test_filter_bad_images(self):
+        """
+        Ensure that bad images / invalid types get filtered out of the list of uploaded files.
+        :return:
+        """
         self.assertFalse(flickr_cli.valid_img({}))
         self.assertFalse(flickr_cli.valid_img(self.path('./non_existant_file.png')))
         self.assertTrue(flickr_cli.valid_img(self.path('./test_img/actual_image.jpg')))
 
     def test_upload_status(self):
         """
+        Ensure that UploadStatus works as expected wrt how it documents file uploads.
         TODO: What about OSes where the files are not sorted in alphabetical order?  Does this matter really?
-
+        TODO: How does it handle failed files?
         :return:
         """
         a = flickr_cli.UploadStatus(self.path('./test_img/'))
