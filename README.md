@@ -45,3 +45,4 @@ TODO
 ----
 - Improve failed upload handling
 - Add uploads to 500px and other photo uploading services.
+- Parallel simultaneous uploads to Flickr
