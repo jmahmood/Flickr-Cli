@@ -14,10 +14,10 @@ def valid_img(f):
             return True
     except AttributeError as e:
         # You probably passed something that is not a path.
-        logging.exception(e)
+        logging.warning(e)
     except IOError as e:
         # You passed a path that does not exist, or you do not have access to it.
-        logging.exception(e)
+        logging.warning(e)
     return False
 
 
@@ -28,17 +28,38 @@ def get_upload_size(files):
 class UploadStatus(object):
     """Used to maintain state while performing uploads."""
     # TODO: Is this actually being used?
+
     def __init__(self, file_list):
+        if isinstance(file_list, basestring):
+            # The file list is a directory and should be converted into a directory list.
+            file_list = [os.path.join(file_list, f)
+                         for f in os.listdir(file_list)
+                         if not os.path.isdir(os.path.join(file_list, f))]
+
         self.file_list = file_list
         self.total_upload_size = get_upload_size(self.file_list)
+        self._file_no = 0
+        self.file = self.get_current_file()
+
+    def increment(self):
+        try:
+            self._file_no += 1
+            self.file = self.get_current_file()
+            return self.file
+        except IndexError:
+            return None
+
+    def get_current_file(self):
+        return self.file_list[self._file_no]
 
     def uploaded_thus_far(self):
         return float(get_upload_size(
-            self.file_list[0:self.file_list.index(self.file)]))
+            self.file_list[0:self._file_no]))
 
-    def status(self, progress, done):
-        # which file?
-        # What % of it is done?
+    def status(self, progress):
+        """
+        Progress: Float: How much of the currently uploading file has been uploaded.
+        """
         total = self.uploaded_thus_far() + float(progress * os.path.getsize(self.file)) / 100
         return round(total / self.total_upload_size * 100, 2)
 
@@ -56,7 +77,7 @@ class Photoset(object):
 
     def exists(self, title):
         """Returns Photoset ID that matches title, if such a set exists.  Otherwise false."""
-        # TODO: What happens if there is no photoset in someone's account?
+        # TODO: What happens if there is no photoset in your account?
         photosets = self.flickr.photosets_getList().find("photosets").findall("photoset")
 
         for p in photosets:
@@ -104,9 +125,8 @@ class AbstractDirectoryUpload(object):
         return os.path.isdir(os.path.join(d, f))
 
     def get_directory_contents(self, d):
-        dir_list = os.listdir(d)
         self.files = [os.path.join(d, f)
-                      for f in dir_list
+                      for f in os.listdir(d)
                       if not self.filter_directory_contents(d, f)]
 
     def prehook(self, **kwargs):
@@ -161,7 +181,7 @@ class DirectoryFlickrUpload(AbstractDirectoryUpload):
                                   is_family=kwargs.get('is_family', 0))
 
     def upload(self):
-        self.responses = [(self.flickr_upload(f), f) for f in self.files]
+        self.responses = [(self.flickr_upload(f, is_public=0, is_family=0), f) for f in self.files]
 
     def parse_response(self):
         self.ids = [r.find("photoid").text for (r, f) in self.responses if r.attrib['stat'] == "ok"]
