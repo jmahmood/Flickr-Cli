@@ -38,8 +38,7 @@ Example:
 The first time you run it, it will prompt you to log into your Flickr account through a browser window.  Once you are logged in, you need to approve uploads by the app to your Flickr account.
 
 
-Please Help
------------
-
-No, I don't want money!  Please contribute test cases; I would like this to work under a wide variety of situations.
-
+TODO
+----
+- Improve failed upload handling
+- Add uploads to 500px and other photo uploading services.
